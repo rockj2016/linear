@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <style>
+    .row_title{
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .my_row{
+        display: flex;
+        margin: 10px 0;
+    }
+    .my_row div{
+        text-align: center;
+        margin: auto;
+
+    }
+    input{
+        width: 100%!important;
+        margin: auto;
+        text-align: center;
+    }
+    .icon_add{
+        font-size: 24px;
+        color: #00c887;
+    }
+    .icon_minus{
+        font-size: 24px;
+        color: #d9534f;
+    }
+    </style>
+</head>
+<body>
+    <div id="page-wrapper">
+        <div class="graphs">
+            <div class="xs " style="padding: 10px 50px">
+            <a class="btn btn-primary pull-right" id="submit_button"  href="javascript:void(0);">保存</a>
+            <h2>主页横幅</h2>
+            <hr style="height:3px;border:none;border-top:3px double #cccccc;"/>
+            <div class="table">
+                <div class="row row_title">
+                    <div class="col-md-2">上传</div>
+                    <div class="col-md-2">预览</div>
+                    <div class="col-md-1">排序</div>
+                    <div class="col-md-3">标题</div>
+                    <div class="col-md-3">链接</div>
+                    <div class="col-md-1">操作</div>
+                </div>
+                {% if image_list %}
+                    {% for image in image_list%}
+                        <div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+
+            <div class="copy_layout ">
+                <p>Copyright &copy; 2016 ttkeurope.com. All Rights Reserved. 天天欧洲物流 版权所有</p>
+            </div>
+            </div>
+        </div>
+    </div>
+    <script type='text/javascript' src="{%static 'app/js/ajaxfileupload.js'%}"></script>
+    <script type='text/javascript' src="{% static 'app/layer/layer.js' %}"></script>
+
+    <script>
+
+        function row_id(){
+            let id = 0;
+            function get_id() {
+                id = id + 1;
+                return id
+            }
+            return get_id
+        }
+
+
+        var get_row_id = row_id();
+
+
+        function add_row(){
+            let row_id = `new${get_row_id()}`;
+
+            let table = document.getElementsByClassName('table')[0];
+            let new_row = document.createElement('div');
+            new_row.setAttribute('class', 'row my_row');
+            new_row.setAttribute('id', `row_${row_id}`);
+            new_row.setAttribute('new', `1`);
+
+            let template = `
+                        <div class="col-md-2 form-group"><input type="file" accept="image/*" id="upload_${row_id}" class="image_upload"></div>
+                        <div class="col-md-2 "><img src=""></div>
+                        <div class="col-md-1 form-group"><input type="number" class="" placeholder=""></div>
+                        <div class="col-md-3 form-group"><input type="text" class="" placeholder="请输入标题"></div>
+                        <div class="col-md-3 form-group"><input type="text" class="" placeholder="请输入链接"></div>
+                        <div class="col-md-1">
+                            <span class="glyphicon glyphicon-plus-sign icon_add" id="iconadd_${row_id}"></span>
+                            <span class="glyphicon glyphicon-minus-sign icon_minus" id="iconminus_${row_id}"></span>
+                        </div>`;
+            new_row.innerHTML = template;
+            table.appendChild(new_row);
+
+            add_listener();
+            minus_listener();
+        }
+
+
+        function update_listener(){
+            let inputs = document.getElementsByClassName('image_upload');
+            for (let i=0; i<inputs.length; i++){
+                inputs[i].addEventListener("change", upload_image);
+            }
+        }
+
+
+        function submit_listener(){
+            let ele = document.getElementById("submit_button")
+            ele.addEventListener('click', data_upload)
+        }
+
+
+        function add_listener(){
+            let icons = document.getElementsByClassName('icon_add');
+            for (let i=0; i<icons.length; i++){
+                icons[i].addEventListener("click", add_banner);
+            }
+        }
+
+
+        function minus_listener(){
+            let icons = document.getElementsByClassName('icon_minus');
+            for (let i=0; i<icons.length; i++){
+                icons[i].addEventListener("click", minus_banner);
+            }
+        }
+
+        function add_banner(){
+            let max = 10;
+            let rows = document.getElementsByClassName('my_row')
+            if (rows.length > max){
+                layer.alert(`最多可设置${max}张图片！`);
+                return
+            }
+            add_row();
+        }
+
+        function minus_banner(e){
+            let rows = document.getElementsByClassName('my_row')
+            if (rows.length === 1){
+                return
+            }
+
+            let id = e.target.id;
+            let row_id = id.split('_')[1]
+            row_id = `row_${row_id}`
+            let ele = document.getElementById(row_id)
+            ele.parentNode.removeChild(ele);
+        }
+
+
+        function upload_data() {
+
+        }
+
+        function get_data() {
+
+        }
+
+
+        function check_data(){
+
+        }
+
+
+        function upload_image(e){
+            let file = e.target.files[0];
+            let file_type = file.type;
+            if (file_type.indexOf('image') === -1){
+                layer.alert('请上传有效图片文件！');
+                return
+            }
+
+            let ele_id = e.target.id;
+            let form = new FormData();
+            form.append('images', file);
+            $.ajax({
+                url: '/manager/aws/s3/upload/images',
+                type: 'post',
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function(res){
+                    console.log(res);
+                    if (res.errno === 0){
+                        let url = res.location;
+                        let ele = document.getElementById(ele_id);
+                        ele.setAttribute('url',url)
+                    }
+                },
+                error: function(e){
+                    layer.alert("图片上传失败");
+                }
+            })
+        }
+
+
+        window.onload = function() {
+            update_listener();
+            add_listener();
+            minus_listener();
+
+            let rows = document.getElementsByClassName('my_row');
+            console.log(rows.length);
+            if (rows.length === 0 ){
+                add_row();
+            }
+        }
+
+
+    </script>
+
+</body>
+</html>
