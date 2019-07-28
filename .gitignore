@@ -107,3 +107,4 @@ venv.bak/
 testpy/
 node_modules
 migrations
+*.sqllite3

@@ -6,7 +6,7 @@ import store from './../store/store'
 class Http {
   constructor () {
     this.$http = axios.create({
-      baseURL: 'http://127.0.0.1:8000/',
+      baseURL: 'http://94.191.56.131/',
       // baseURL: 'http://134.175.22.23:8899/',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
