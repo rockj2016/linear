@@ -60,7 +60,7 @@ ROOT_URLCONF = 'linear.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['frontend/dist'],
+        'DIRS': ['../frontend/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,15 +79,22 @@ WSGI_APPLICATION = 'linear.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# databasesDATABASES = {
+#   'default': {
+#     'ENGINE':  'django.db.backends.mysql',
+#     'NAME':  'linear',
+#     'USER':  'root',
+#     'PASSWORD': 'root',
+#     'HOST':  'localhost',
+#     'PORT':  3306,
+#   }
+# }
+
 DATABASES = {
-  'default': {
-    'ENGINE':  'django.db.backends.mysql',
-    'NAME':  'linear',
-    'USER':  'root',
-    'PASSWORD': 'root',
-    'HOST':  'localhost',
-    'PORT':  3306,
-  }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 
@@ -127,6 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 # Place static in the same location as webpack build files
 STATICFILES_DIRS = [

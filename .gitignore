@@ -106,3 +106,4 @@ venv.bak/
 .idea/
 testpy/
 node_modules
+migrations
