@@ -55,7 +55,7 @@ export default {
         }
       }catch (err){
         console.log(err)
-        this.$message.error('网络错误');
+        // this.$message.error('网络错误');
       }
     },
 
@@ -97,20 +97,20 @@ export default {
 .container{
   height: 100%;
   width: 100%;
-  background-image: url('../assets/bg.jpg');
+  position: fixed;
+  background-image: url('../assets/background.jpg');
   background-repeat:no-repeat;
   background-size:100% 100%;
   -moz-background-size:100% 100%;
 }
 .logo{
-  color: #5fb2dc;
+  color: white;
   font-size: 50px;
   padding: 60px 0;
 }
 .box{
   width:60%;
   margin: auto;
-  margin-top: 120px;
   padding: 20px;
   .title{
     height: 30px;

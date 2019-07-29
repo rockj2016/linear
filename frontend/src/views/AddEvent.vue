@@ -71,20 +71,14 @@ export default {
         return
       }
       Http.addEvent(data).then(res=>{
-        if (res.status === 200){
-          this.$message({
-            message: '添加成功',
-            type: 'success'
-          });
-          this.$router.go(-1)
-        }else{
-          this.$message.error(res.data)
-        }
-
+        this.$message({
+          message: '添加成功',
+          type: 'success'
+        });
+        this.$router.go(-1)
       }).catch(err=>{
         this.$message.error('添加失败')
       })
-
     }
   }
 }

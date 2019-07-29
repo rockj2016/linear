@@ -6,13 +6,10 @@ import store from './../store/store'
 class Http {
   constructor () {
     this.$http = axios.create({
-      baseURL: 'http://94.191.56.131/',
-      // baseURL: 'http://134.175.22.23:8899/',
+      // baseURL: 'http://127.0.0.1:8000/',
+      baseURL: `http://${window.location.host}/`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      validateStatus: function (status) {
-        return status < 500 // 状态码在大于或等于500时才会 reject
       },
       xsrfCookieName: 'csrftoken',
       xsrfHeaderName: 'X-CSRFToken'
@@ -33,21 +30,9 @@ class Http {
         store.commit('logout')
         router.replace({ name: 'login', params: { go_check: false } })
       }
-      // else if(response.status === 200){
-      //     return response
-      // }
       return response
-      // else{
-      //     let message =''
-      //     if (response.data){
-      //         message = response.data.info
-      //     }
-      //     alert(message)
-      // return Promise.reject()
-      // }
     }, function (error) {
       // 对响应错误做点什么
-      console.log(error)
       return Promise.reject(error)
     })
   }

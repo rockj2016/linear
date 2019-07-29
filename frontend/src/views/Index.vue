@@ -2,7 +2,7 @@
   <div class="container_">
     <div class="tool">
       <div class="time">
-        12:00
+        {{time}}
       </div>
       <div class="add" v-on:click="add">
         <span class="icon iconfont">&#xe6b9;</span>
@@ -56,6 +56,7 @@ export default {
   name: 'index',
   data(){
     return {
+      time:'',
       data:[],
       log_data:{
         event_id:'',
@@ -67,6 +68,7 @@ export default {
     }
   },
   mounted(){
+    this.getData()
     http.eventList().then(res=>{
       console.log(res)
       this.data = res.data
@@ -98,23 +100,27 @@ export default {
         return
       }
       http.addLog(this.log_data).then((res)=>{
-        console.log(res)
-        if (res.status == 201){
-          this.$message({
-            message: '添加成功',
-            type: 'success'
-          })
-          this.show_dialog = false
-          this.log_data.note = ''
-          this.log_data.amount = ''
-        }else{
-          this.$message.error(res.data);
-        }
-
+        this.$message({
+          message: '添加成功',
+          type: 'success'
+        })
+        this.show_dialog = false
+        this.log_data.note = ''
+        this.log_data.amount = ''
       }).catch(err=>{
         console.log(err)
         this.$message.error('记录失败');
       })
+    },
+    getData() {
+      let t = new Date();
+      let h = t.getHours();
+      let m = t.getMinutes();
+      this.time = `${h}:${m}`
+      let _this = this;
+      setTimeout(() => {
+        _this.getData();
+      }, 10000);
     }
   }
 }
