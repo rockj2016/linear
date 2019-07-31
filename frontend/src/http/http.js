@@ -80,6 +80,9 @@ class Http {
   addLog (data) {
     return this.$http.post('log/', data, { ...this.dataMethodDefaults })
   }
+  eventDetail (data) {
+    return this.$http.get('log/', { params: data })
+  }
 }
 
 export default new Http()

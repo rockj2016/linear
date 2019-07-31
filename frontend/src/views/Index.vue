@@ -10,7 +10,7 @@
     </div>
 
     <div class="event_box">
-      <div class="event" v-for="item in data" v-bind:key="item.id">
+      <div class="event" v-on:click="detail(item.id)" v-for="item in data" v-bind:key="item.id">
         <div class="event_title">{{item.title}}</div>
         <div v-if="item.type==1" class="event_type">
           <div class="type">定时 :</div>
@@ -24,8 +24,8 @@
           <div class="type">计量 :</div>
           <div class="quant">{{item.amount}}</div>
         </div>
-        <div class="grow"></div>
-        <div class="button_log" v-on:click="show(item.id,item.type)">log</div>
+        <div class="grow" ></div>
+        <div class="button_log" v-on:click="show(item.id,item.type)" v-on:click.stop="">log</div>
       </div>
     </div>
     <div class="dialog" v-if="show_dialog" v-on:click="close_dialog">
@@ -111,6 +111,9 @@ export default {
         console.log(err)
         this.$message.error('记录失败');
       })
+    },
+    detail(e){
+      this.$router.push({ name: 'detail', params: { id: e }})
     },
     getData() {
       let t = new Date();

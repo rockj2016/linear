@@ -41,7 +41,7 @@ var router = new Router({
     {
       path: '/reset',
       name: 'reset',
-      component: () => import(/* webpackChunkName: "about" */ './views/Reset.vue'),
+      component: () => import(/* webpackChunkName: "reset" */ './views/Reset.vue'),
       meta: {
         requireAuth: false,
         title: '修改密码'
@@ -50,10 +50,19 @@ var router = new Router({
     {
       path: '/addevent',
       name: 'addevent',
-      component: () => import(/* webpackChunkName: "about" */ './views/AddEvent.vue'),
+      component: () => import(/* webpackChunkName: "addevent" */ './views/AddEvent.vue'),
       meta: {
         requireAuth: true,
         title: 'add event'
+      }
+    },
+    {
+      path: '/detail',
+      name: 'detail',
+      component: () => import(/* webpackChunkName: "detail" */ './views/Detail.vue'),
+      meta: {
+        requireAuth: true,
+        title: 'detail'
       }
     }
     // {

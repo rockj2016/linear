@@ -109,7 +109,6 @@ class EventViewSet(mixins.CreateModelMixin,
         3.  perform_create函数是在保存到数据库之前修改校验以后的数据
         4.  Nested relationships的情况下需要改写serializer的create函数  *By default nested serializers are read-only.*
         """
-        print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -145,7 +144,11 @@ class EventLogViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         user = self.request.user
-        return EventLog.objects.filter(user=user)
+        queryset = EventLog.objects.filter(user=user).order_by('-id')
+        event_id = self.request.GET.get('event_id')
+        if event_id:
+            queryset = queryset.filter(event_id=event_id)
+        return queryset
 
     def perform_create(self, serializer):
         event = Event.objects.get(id=self.request.data['event_id'])
@@ -158,9 +161,11 @@ class EventLogViewSet(mixins.CreateModelMixin,
         3.  perform_create函数是在保存到数据库之前修改校验以后的数据
         4.  Nested relationships的情况下需要改写serializer的create函数  *By default nested serializers are read-only.*
         """
-        today_min = datetime.datetime.combine(timezone.now().today(), datetime.time.min)
-        today_max = datetime.datetime.combine(timezone.now().today(), datetime.time.max)
-        is_log = EventLog.objects.filter(datetime__range=(today_min, today_max), event_id=request.data['event_id']).exists()
+        today_max = datetime.datetime.now() + datetime.timedelta(minutes=2)
+        today_min = datetime.datetime.now() - datetime.timedelta(hours=5)
+        is_log = EventLog.objects.filter(
+            datetime__range=(today_min, today_max),
+            event_id=request.data['event_id']).exists()
         if is_log:
             return Response('今日已经记录', status=status.HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(data=request.data)
@@ -168,3 +173,20 @@ class EventLogViewSet(mixins.CreateModelMixin,
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def list(self, request, *args, **kwargs):
+        event_id = self.request.GET.get('event_id')
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        event = Event.objects.get(pk=event_id)
+        event = EventSerializer(event).data
+        log_list = self.get_serializer(queryset, many=True).data
+        for x in log_list:
+                x['datetime'] = x['datetime'][:16].replace('T', ' ')
+        return Response({'event': event, 'log_list': log_list})
