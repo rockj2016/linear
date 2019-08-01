@@ -96,8 +96,8 @@ export default {
       if (this.log_data.type === 3){
         if (!this.log_data.amount){
           this.$message.error('请输入数值');
+          return
         }
-        return
       }
       http.addLog(this.log_data).then((res)=>{
         this.$message({

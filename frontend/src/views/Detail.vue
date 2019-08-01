@@ -16,7 +16,7 @@ export default {
   name: 'detail',
   data(){
     return {
-      event:'',
+      event:{},
       log_list:[]
     }
   },
